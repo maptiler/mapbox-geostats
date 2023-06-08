@@ -1,7 +1,6 @@
 'use strict';
 
 const test = require('tap').test;
-const _ = require('lodash');
 const path = require('path');
 const fs = require('fs');
 const sloppySort = require('./utils/sloppy-sort');
@@ -282,9 +281,9 @@ test('Shapefile with specified attribute with over 1000 values', t => {
   ]).then((output) => {
     const actual = sloppySort(output[0]);
     t.same(actual, sloppySort(output[1]), 'expected output');
-    const nameAttribute = _.find(actual.layers[0].attributes, attribute => {
-      return attribute.attribute === 'name';
-    });
+    const nameAttribute = actual.layers[0].attributes.find(
+      (attribute) => attribute.attribute === 'name'
+    );
     t.equal(nameAttribute.count, 1042, 'value count did not stop at 1000');
     t.equal(nameAttribute.values.length, 1042, 'value details did not stop at 100');
     t.end();
