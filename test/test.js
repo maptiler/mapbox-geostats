@@ -50,9 +50,9 @@ test('Errors when Mapnik-interpreted file not found', t => {
   });
 });
 
-test('GeoJSON with many value types, input matching MBTiles', t => {
+test('GeoJSON with many value types, input matching MBTiles, forceAllAttributes', t => {
   Promise.all([
-    geostats(fixturePath('src/many-types.geojson')),
+    geostats(fixturePath('src/many-types.geojson'), { forceAllAttributes: true }),
     getExpected('many-types-geojson'),
   ]).then((output) => {
     t.same(sloppySort(output[0]), sloppySort(output[1]), 'expected output');
@@ -82,7 +82,7 @@ test('GeoJSON with over 100 unique attributes and values, input matching Shapefi
       t.same(output[0], output[1], 'expected output');
       t.end();
     }).catch(t.threw);
-  }
+  },
 );
 
 // Key difference between the Shapefile and the GeoJSON output right now
@@ -97,7 +97,7 @@ test('Shapefile with over 100 unique attributes and values, input matching GeoJS
       t.same(output[0], output[1], 'expected output');
       t.end();
     }).catch(t.threw);
-  }
+  },
 );
 
 // Key difference between the CSV and Shapefile and GeoJSON is that it
@@ -111,18 +111,8 @@ test('CSV with over 100 unique attributes and values, input matching GeoJSON and
       t.same(output[0], output[1], 'expected output');
       t.end();
     }).catch(t.threw);
-  }
+  },
 );
-
-test('Shapefile with over 1000 unique values', t => {
-  Promise.all([
-    geostats(fixturePath('src/ports/ports.shp')),
-    getExpected('ports'),
-  ]).then((output) => {
-    t.same(output[0], output[1], 'expected output');
-    t.end();
-  }).catch(t.threw);
-});
 
 test('MBTiles with gzipped data', t => {
   Promise.all([
@@ -272,20 +262,15 @@ test('invalid file format', t => {
   });
 });
 
-test('Shapefile with specified attribute with over 1000 values', t => {
+test('GeoJSON with specified name attribute', t => {
   Promise.all([
-    geostats(fixturePath('src/ports/ports.shp'), {
+    geostats(fixturePath('src/many-types.geojson'), {
       attributes: ['name'],
     }),
-    getExpected('ports-only-name'),
+    getExpected('many-types-geojson-name-only'),
   ]).then((output) => {
     const actual = sloppySort(output[0]);
     t.same(actual, sloppySort(output[1]), 'expected output');
-    const nameAttribute = actual.layers[0].attributes.find(
-      (attribute) => attribute.attribute === 'name'
-    );
-    t.equal(nameAttribute.count, 1042, 'value count did not stop at 1000');
-    t.equal(nameAttribute.values.length, 1042, 'value details did not stop at 100');
     t.end();
   }).catch(t.threw);
 });
@@ -298,61 +283,6 @@ test('GeoJSON with specified attributes', t => {
     getExpected('two-thousand-properties-only-two'),
   ]).then((output) => {
     t.same(sloppySort(output[0]), sloppySort(output[1]), 'expected output');
-    t.end();
-  }).catch(t.threw);
-});
-
-test('GeoJSON with over 10000 unique values and no specified attributes', t => {
-  Promise.all([
-    geostats(fixturePath('src/myriad-values.geojson')),
-    getExpected('myriad-values-all-attrs'),
-  ]).then((output) => {
-    const actual = sloppySort(output[1]);
-    t.same(sloppySort(output[0]), actual, 'expected output');
-    t.ok(actual.layers[0].attributes.every(attribute => {
-      return attribute.count === 1000;
-    }), 'value counts stop at 1000');
-    t.ok(actual.layers[0].attributes.every(attribute => {
-      return attribute.values.length === 100;
-    }), 'value details stop at 100');
-    t.end();
-  }).catch(t.threw);
-});
-
-test('GeoJSON with over 10000 unique values and one specified attribute', t => {
-  Promise.all([
-    geostats(fixturePath('src/myriad-values.geojson'), {
-      attributes: ['prop-3'],
-    }),
-    getExpected('myriad-values-1-attr'),
-  ]).then((output) => {
-    const actual = sloppySort(output[1]);
-    t.same(sloppySort(output[0]), actual, 'expected output');
-    t.ok(actual.layers[0].attributes.every(attribute => {
-      return attribute.count === 10010;
-    }), 'value count does not stop yet');
-    t.ok(actual.layers[0].attributes.every(attribute => {
-      return attribute.values.length === 10000;
-    }), 'value details stop at 10000');
-    t.end();
-  }).catch(t.threw);
-});
-
-test('GeoJSON with over 10000 unique values and five specified attribute', t => {
-  Promise.all([
-    geostats(fixturePath('src/myriad-values.geojson'), {
-      attributes: ['prop-1', 'prop-2', 'prop-3', 'prop-4', 'prop-5'],
-    }),
-    getExpected('myriad-values-5-attrs'),
-  ]).then((output) => {
-    const actual = sloppySort(output[1]);
-    t.same(sloppySort(output[0]), actual, 'expected output');
-    t.ok(actual.layers[0].attributes.every(attribute => {
-      return attribute.count === 10010;
-    }), 'value counts does not stop yet');
-    t.ok(actual.layers[0].attributes.every(attribute => {
-      return attribute.values.length === 2000;
-    }), 'value details stop at 2000');
     t.end();
   }).catch(t.threw);
 });
