@@ -13,6 +13,8 @@ const Constants = require('./lib/constants');
  */
 function buildGeoStats(filePath, options) {
   options = options || {};
+  options.forceAllAttributes ??= false;
+  options.maxValuesToReport ??= 50;
 
   if (options.attributes) {
     if (options.attributes.length > Constants.ATTRIBUTES_MAX_REPORT) {
