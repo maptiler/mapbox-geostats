@@ -3,6 +3,9 @@
   "version": "1.1.2",
   "description": "Generate statistics about geographic data.",
   "main": "index.js",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "bin": {
     "mapbox-geostats": "bin/mapbox-geostats",
     "mapbox-geostats-validate": "bin/mapbox-geostats-validate"
@@ -37,7 +40,7 @@
     "pbf": "^3.2.1"
   },
   "devDependencies": {
-    "eslint": "^8.39.0",
+    "eslint": "^8.43.0",
     "eslint-plugin-node": "^11.1.0",
     "tap": "^16.3.4"
   }

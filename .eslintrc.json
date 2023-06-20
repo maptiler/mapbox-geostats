@@ -1,8 +1,12 @@
 {
-  "extends": "eslint:recommended",
   "env": {
-    "node": true,
-    "es6": true
+    "commonjs": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": 2021
   },
   "plugins": [
     "node"
@@ -32,7 +36,8 @@
     "keyword-spacing": [2, { "before": true, "after": true }],
     "strict": 2,
 
-    "node/no-unsupported-features": [2, {"version": 10.0}],
+    "node/no-unsupported-features/es-syntax": 2,
+    "node/no-unsupported-features/es-builtins": 2,
     "node/no-missing-require": 2
   }
 }
