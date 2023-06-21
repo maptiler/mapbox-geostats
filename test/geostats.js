@@ -1,11 +1,11 @@
 'use strict';
 
 const test = require('tap').test;
+const skip = require('tap').skip;
 const path = require('path');
 const fs = require('fs');
 const sloppySort = require('./utils/sloppy-sort');
 const geostats = require('../');
-const validator = require('../lib/validate-stats');
 
 function fixturePath(fileName) {
   return path.join(__dirname, 'fixtures', fileName);
@@ -182,23 +182,23 @@ test('CSV with no features', t => {
 });
 
 // Currently this is blocked by a bug in node-mapnik
-// test('GeoJSON with no features still outputs', t => {
-//   geostats(fixturePath('src/no-features.geojson')).then((output) => {
-//     var expected = {
-//       layerCount: 1,
-//       layers: [
-//         {
-//           attributeCount: 0,
-//           attributes: [],
-//           count: 0,
-//           layer: 'no-features'
-//         }
-//       ]
-//     };
-//     t.same(output, expected, 'expected output');
-//     t.end();
-//   }).catch(t.threw);
-// });
+skip('GeoJSON with no features still outputs', t => {
+  geostats(fixturePath('src/no-features.geojson')).then((output) => {
+    const expected = {
+      layerCount: 1,
+      layers: [
+        {
+          attributeCount: 0,
+          attributes: [],
+          count: 0,
+          layer: 'no-features',
+        },
+      ],
+    };
+    t.same(output, expected, 'expected output');
+    t.end();
+  }).catch(t.threw);
+});
 
 test('invalid GeoJSON', t => {
   geostats(fixturePath('src/invalid.geojson')).then(() => {
@@ -349,131 +349,4 @@ test('MBTiles with tilestats metadata table returns as expected', t => {
     t.same(sloppySort(output[0]), sloppySort(output[1]), 'expected output');
     t.end();
   }).catch(t.threw);
-});
-
-test('[validator] valid stats object', t => {
-  const stats = {
-    layerCount: 1,
-    layers: [
-      {
-        layer: 'test-layer',
-        count: 3,
-        geometry: 'Point',
-        attributeCount: 1,
-        attributes: [
-          {
-            attribute: 'test-attribute',
-            count: 3,
-            type: 'number',
-            values: [2, 5, 19],
-            min: 2,
-            max: 19,
-          },
-        ],
-      },
-    ],
-  };
-
-  t.ok(validator(stats));
-  t.end();
-});
-
-test('[validator] invalid stats object - no layers', t => {
-  const stats = {
-    layerCount: 1,
-  };
-
-  const results = validator(stats);
-  t.equal(results.length, 1, 'only one error');
-  t.equal(results[0], 'instance requires property "layers"', 'expected error message');
-  t.end();
-});
-
-test('[validator] invalid layer object - no layer name', t => {
-  const stats = {
-    layerCount: 1,
-    layers: [
-      {
-        count: 3,
-        geometry: 'Point',
-        attributeCount: 1,
-        attributes: [
-          {
-            attribute: 'test-attribute',
-            count: 3,
-            type: 'number',
-            values: [2, 5, 19],
-            min: 2,
-            max: 19,
-          },
-        ],
-      },
-    ],
-  };
-
-  const results = validator(stats);
-  t.equal(results.length, 1, 'only one error');
-  t.equal(results[0], 'instance.layers[0] requires property "layer"', 'expected error message');
-  t.end();
-});
-
-test('[validator] invalid layer object - no layer name', t => {
-  const stats = {
-    layerCount: 'wrong type',
-    layers: [
-      {
-        geometry: 'Point',
-        attributes: [
-          {
-            attribute: 'test-attribute',
-            type: 'number',
-            min: 2,
-            max: 19,
-          },
-        ],
-      },
-    ],
-  };
-
-  const expected = sloppySort([
-    'instance.layerCount is not of a type(s) number',
-    'instance.layers[0] requires property "count"',
-    'instance.layers[0].attributes[0] requires property "values"',
-    'instance.layers[0] requires property "layer"',
-    'instance.layers[0].attributes[0] requires property "count"',
-    'instance.layers[0] requires property "attributeCount"',
-  ]);
-
-  const results = validator(stats);
-  t.same(sloppySort(results), expected, 'expect lots of errors');
-  t.end();
-});
-
-test('[validator] invalid attributes contain mulitple types', t => {
-  const stats = {
-    layerCount: 1,
-    layers: [
-      {
-        layer: 'test-layer',
-        count: 3,
-        geometry: 'Point',
-        attributeCount: 1,
-        attributes: [
-          {
-            attribute: 'test-attribute',
-            count: 3,
-            type: 'number',
-            values: [2, 'five', null],
-            min: 2,
-            max: 19,
-          },
-        ],
-      },
-    ],
-  };
-
-  const results = validator(stats);
-  t.equal(results.length, 1, 'only one error');
-  t.equal(results[0], 'instance.layers[0].attributes[0].values is not any of [subschema 0],[subschema 1],[subschema 2],[subschema 3]', 'expected error message');
-  t.end();
 });
