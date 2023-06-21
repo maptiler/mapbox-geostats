@@ -2,8 +2,10 @@
 
 const test = require('tap').test;
 const skip = require('tap').skip;
+const before = require('tap').before;
+const teardown = require('tap').teardown;
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs').promises;
 const sloppySort = require('./utils/sloppy-sort');
 const geostats = require('../');
 
@@ -11,14 +13,22 @@ function fixturePath(fileName) {
   return path.join(__dirname, 'fixtures', fileName);
 }
 
-function getExpected(name) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(fixturePath(path.join('expected', name + '.json')), 'utf8', (err, data) => {
-      if (err) return reject(err);
-      resolve(JSON.parse(data));
-    });
-  });
+async function getExpected(name) {
+  const data = await fs.readFile(
+    fixturePath(path.join('expected', name + '.json')),
+    'utf8',
+  );
+  return JSON.parse(data);
 }
+
+let tmpPath;
+
+before(async() => {
+  tmpPath = await fs.mkdtemp(fixturePath('tmp-'));
+  return tmpPath;
+});
+
+teardown(() => fs.rm(tmpPath, { recursive: true }));
 
 test('Errors without a file path', t => {
   geostats().then(() => {
@@ -349,4 +359,32 @@ test('MBTiles with tilestats metadata table returns as expected', t => {
     t.same(sloppySort(output[0]), sloppySort(output[1]), 'expected output');
     t.end();
   }).catch(t.threw);
+});
+
+test('option --into-md with non MBTiles file', t => {
+  t.rejects(
+    geostats(fixturePath('src/many-types.geojson'), { intoMd: true }),
+    new Error('Option --into-md can be used only for mbtiles'),
+  );
+  t.end();
+});
+
+test('MBTiles with option --into-md', async(t) => {
+  const tmpFilename = path.join(tmpPath, 'many-types.mbtiles');
+  await fs.copyFile(fixturePath('src/many-types.mbtiles'), tmpFilename);
+
+  const [act, exp] = await Promise.all([
+    geostats(tmpFilename, { intoMd: true }),
+    getExpected('many-types-mbtiles'),
+  ]);
+  t.same(sloppySort(act), sloppySort(exp), 'expected output');
+
+  t.rejects(
+    geostats(tmpFilename, { intoMd: true }),
+    new Error('Tilestats already exists, use without --into-md'),
+  );
+
+  const preGenStats = await geostats(tmpFilename);
+  t.same(sloppySort(preGenStats), sloppySort(exp), 'expected output');
+  t.end();
 });
