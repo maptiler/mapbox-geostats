@@ -288,8 +288,7 @@ test('GeoJSON with specified attributes', t => {
 });
 
 test('Trying to report on more than 100 attributes', t => {
-  t.throws(() => {
-    geostats(fixturePath('src/populations-plus.geojson'), {
+  t.rejects(geostats(fixturePath('src/populations-plus.geojson'), {
       attributes: ['attr-0', 'attr-1', 'attr-2', 'attr-3', 'attr-4', 'attr-5',
         'attr-6', 'attr-7', 'attr-8', 'attr-9', 'attr-10', 'attr-11', 'attr-12',
         'attr-13', 'attr-14', 'attr-15', 'attr-16', 'attr-17', 'attr-18', 'attr-19',
@@ -307,8 +306,8 @@ test('Trying to report on more than 100 attributes', t => {
         'attr-97', 'attr-98', 'attr-99', 'attr-100', 'attr-101', 'attr-102',
         'attr-103', 'attr-104', 'attr-105', 'attr-106', 'attr-107', 'attr-108',
         'attr-109'],
-    });
-  }, 'throws');
+    }), new Error('Cannot report on more than 100 attributes'),
+  );
   t.end();
 });
 
