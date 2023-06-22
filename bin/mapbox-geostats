@@ -9,7 +9,8 @@ const help = `
   Usage
     mapbox-geostats <input> <options>
 
-    Output is logged to the console as a JSON string.
+    Output is logged to the console as a JSON string or written into mbtiles
+    when using --into-md option.
 
   Options
     --attributes, -a Specify attributes to analyze. The provided value
@@ -22,7 +23,7 @@ const help = `
                               report. Default: 50. If exceeded, show min and
                               max instead.
     --into-md Insert generated tilestats into mbtiles metadata table. Fail
-              when tilestats already exist.
+              when tilestats already exist. Output is empty on success.
 
   Example
     mapbox-geostats cities.geojson --attributes name,pop > output.json
