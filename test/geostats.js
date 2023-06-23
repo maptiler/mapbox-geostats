@@ -378,7 +378,7 @@ t.test('MBTiles with option --into-md', async(t) => {
 
   t.rejects(
     geostats(tmpFilename, { intoMd: true }),
-    new Error('Tilestats already exists, use without --into-md'),
+    new Error('Tilestats already exist in json record of metadata table, run without --into-md to display them'),
   );
 
   const preGenStats = await geostats(tmpFilename);
