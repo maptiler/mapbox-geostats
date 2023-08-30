@@ -67,7 +67,7 @@ Options
   --brief-attributes Override default values for brief attributes. Provided
                      value will be parsed as an array, split on commas.
                      Cannot be used with --force-all-attributes.
-  --force-all-attributes, -f Include values of brief-attributes. Cannot be
+  --force-all-attributes, -f Include values of brief attributes. Cannot be
                              used with --brief-attributes.
   --ignore-translations Exclude name translations attributes (name_int,
                         name_de, name_en, name:*). Default: true.
