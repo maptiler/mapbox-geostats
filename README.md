@@ -63,12 +63,12 @@ Usage
 
 Options
   --attributes, -a Specify attributes to analyze. The provided value
-                    will be parsed as an array, split on commas.
+                   will be parsed as an array, split on commas.
   --brief-attributes Override default values for brief attributes. Provided
-                      value will be parsed as an array, split on commas.
-                      Cannot be used with --force-all-attributes.
+                     value will be parsed as an array, split on commas.
+                     Cannot be used with --force-all-attributes.
   --force-all-attributes, -f Include values of brief-attributes. Cannot be
-                              used with --brief-attributes.
+                             used with --brief-attributes.
   --ignore-translations Exclude name translations attributes (name_int,
                         name_de, name_en, name:*). Default: true.
   --tile-stats-values-limit Limit the number of unique attribute values to
