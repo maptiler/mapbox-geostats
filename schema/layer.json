@@ -14,5 +14,5 @@
       "items": { "$ref": "/attribute" }
     }
   },
-  "required": [ "layer", "count", "geometry", "attributeCount" ]
+  "required": [ "layer", "geometry", "attributeCount" ]
 }
