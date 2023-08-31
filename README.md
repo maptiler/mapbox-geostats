@@ -74,6 +74,8 @@ Options
   --tile-stats-values-limit Limit the number of unique attribute values to
                             report. Default: 50. If exceeded, show min and
                             max instead.
+  --add-languages Save all the languages from the vector data into the
+                  metadata languages array. Default: true.
   --into-md Insert generated tilestats into mbtiles metadata table. Fail
             when tilestats already exist. Output is empty on success.
 
