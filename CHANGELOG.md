@@ -1,4 +1,4 @@
-# DEVEL
+# 2.0.0
 
 - Ignore/limit attribute values [#1](https://github.com/maptiler/tilestats/pull/1)
 - `buildGeoStats` rejects promise instead of throwing an error [#3](https://github.com/maptiler/tilestats/pull/3)
@@ -11,11 +11,9 @@
 - Add `add-languages` option to generate languages stats [#9](https://github.com/maptiler/tilestats/pull/9)
 - Renamed repository, package and bin files [#12](https://github.com/maptiler/tilestats/pull/12)
 
-
 # 1.1.2
 
 - Upgrade to node 16+
-
 
 # 1.1.1
 
